@@ -11,20 +11,40 @@ const cover = document.getElementById('cover');
 const currTime = document.querySelector('#currTime');
 const durTime = document.querySelector('#durTime');
 
-// Song titles
-const songs = ['hey', 'summer', 'ukulele'];
+// Song infomation
+let songs = ['ukulele', 'summer', 'hey', binaryStar = {
+	url: 'https://api.paugram.com/netease/?id=554244254'
+}]
+
 
 // Keep track of song
-let songIndex = 2;
+let songIndex = 3;
 
 // Initially load song details into DOM
 loadSong(songs[songIndex]);
 
+// Get songs info from netease api
+async function getInfo(url) {
+	const res = await fetch(url);
+	const json = await res.json()
+
+	return json
+}
+
 // Update song details
 function loadSong(song) {
-  title.innerText = song;
-  audio.src = `music/${song}.mp3`;
-  cover.src = `images/${song}.jpg`;
+	if (typeof song == "string") {
+		title.innerText = song;
+		audio.src = `https://fastly.jsdelivr.net/gh/bradtraversy/vanillawebprojects@master/music-player/music/${song}.mp3`;
+		cover.src = `https://fastly.jsdelivr.net/gh/bradtraversy/vanillawebprojects@master/music-player/images/${song}.jpg`;
+	} else if (typeof song == "object" ) {
+		getInfo(song.url).then(json => {
+			title.innerText = json.title;
+			audio.src = json.link + ".mp3";
+			cover.src = json.cover;
+		})
+	}
+
 }
 
 // Play song
